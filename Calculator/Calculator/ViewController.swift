@@ -17,35 +17,37 @@ class ViewController: UIViewController {
     @IBAction func operate(sender: UIButton) {
         let op = sender.currentTitle!
         switch op {
-        case "+":
-            if operandStack.count >= 2 {
-                displayValue = operandStack.removeLast() + operandStack.removeLast()
-                enter()
-            }
-            
-        case "-":
-            if operandStack.count >= 2 {
-                displayValue = -operandStack.removeLast() + operandStack.removeLast()
-                enter()
-            }
-            
-        case "*":
-            if operandStack.count >= 2 {
-                displayValue = operandStack.removeLast() + operandStack.removeLast()
-                enter()
-            }
-            
-        case "/":
-            if operandStack.count >= 2 {
-                let op1 = operandStack.removeLast()
-                let op2 = operandStack.removeLast()
-                displayValue = op1 / op2
-                enter()
-            }
+        case "+": performOperation(plus)
+        case "-": performOperation(minus)
+        case "*": performOperation(mutiply)
+        case "/": performOperation(divid)
         default:break
+        } // switch
+    }
+    
+    // operation是函数，在swift中函数也是一中类型
+    // 该函数有两个double参数，返回值为double
+    func performOperation(operation: (Double, Double) -> Double) {
+        if operandStack.count >= 2 {
+            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
+            enter()
         }
-        
-        
+    }
+    
+    func plus(op1: Double, op2: Double) -> Double {
+        return op1 + op2
+    }
+    
+    func mutiply(op1: Double, op2: Double) -> Double {
+        return op1 * op2
+    }
+    
+    func divid(op1: Double, op2: Double) ->Double {
+        return op2 / op1;
+    }
+    
+    func minus(op1: Double, op2: Double) ->Double {
+        return op2 - op1
     }
     
     @IBAction func appendDigit(sender: UIButton) {
