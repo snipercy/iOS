@@ -12,15 +12,22 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var display: UILabel!
     
-    var hasTypeingNum:Bool = false
+    var hasTypingNum:Bool = false
     
     @IBAction func operate(sender: UIButton) {
+        if hasTypingNum {
+            enter()
+        }
+        
         let op = sender.currentTitle!
         switch op {
-        case "+": performOperation(plus)
-        case "-": performOperation(minus)
-        case "*": performOperation(mutiply)
-        case "/": performOperation(divid)
+        case "+": performOperation( {(op1: Double, op2: Double) -> Double in
+            return op1 + op2
+        })
+        case "-": performOperation() {$1 - $0}
+        case "*": performOperation {$0 * $1}
+        case "/": performOperation({$1 / $0})
+        case "√": performOperation {sqrt($0)}
         default:break
         } // switch
     }
@@ -34,29 +41,23 @@ class ViewController: UIViewController {
         }
     }
     
-    func plus(op1: Double, op2: Double) -> Double {
-        return op1 + op2
-    }
-    
-    func mutiply(op1: Double, op2: Double) -> Double {
-        return op1 * op2
-    }
-    
-    func divid(op1: Double, op2: Double) ->Double {
-        return op2 / op1;
-    }
-    
-    func minus(op1: Double, op2: Double) ->Double {
-        return op2 - op1
+    // 函数的多态性
+    // 函数的参数个数不同
+    @nonobjc
+    func performOperation(operation: Double -> Double) {
+        if operandStack.count >= 1 {
+            displayValue = operation(operandStack.removeLast())
+            enter()
+        }
     }
     
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
-        if hasTypeingNum  {
+        if hasTypingNum  {
             display.text = display.text! + digit
         } else {
             display.text = digit
-            hasTypeingNum = true
+            hasTypingNum = true
         }
     }
     
@@ -66,11 +67,11 @@ class ViewController: UIViewController {
     
     // enter button
     @IBAction func enter() {
-        hasTypeingNum = false;
+        hasTypingNum = false;
         operandStack.append(displayValue)
         
         // for debug
-        print("operandStack=", operandStack.last!)
+        print("operandStack=", operandStack)
         print("array size : ", operandStack.capacity)
     }
     
@@ -81,7 +82,7 @@ class ViewController: UIViewController {
         // print("new array size : ", operandStack.capacity) -> 0
         
         display.text = "0"
-        hasTypeingNum = false
+        hasTypingNum = false
     }
     
     var displayValue:Double {
@@ -90,7 +91,7 @@ class ViewController: UIViewController {
         }
         set {
             display.text = "\(newValue)"
-            hasTypeingNum = false
+            hasTypingNum = false
         }
     }
     
